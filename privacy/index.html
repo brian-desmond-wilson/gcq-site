@@ -36,7 +36,7 @@
     <ul>
       <li><strong>Activity log:</strong> the original app records which screens you open and key actions, such as signing in, so team admins can troubleshoot problems and see how the app is used.</li>
       <li><strong>Error reports:</strong> if the app crashes, it sends us a description of the error.</li>
-      <li><strong>Notifications:</strong> if you allow notifications in the original app, your device's notification token is stored so we can send team alerts.</li>
+      <li><strong>Notifications:</strong> if you allow notifications, your device's notification token is stored so we can send team alerts. In the current app, each phone is registered separately and removed when you sign out or delete your account.</li>
       <li><strong>Location:</strong> only if you turn on location sharing on a tournament map. Teammates can then see where you are until you turn it off. Location is never collected in the background otherwise.</li>
     </ul>
 
@@ -54,6 +54,7 @@
     <ul>
       <li><strong>Supabase:</strong> hosts the app's database, sign-in and photo storage.</li>
       <li><strong>Apple and Google:</strong> sign in with Apple or Google, if you choose them.</li>
+      <li><strong>Apple Push Notification service:</strong> delivers alerts to the current app.</li>
       <li><strong>Expo:</strong> delivers push notifications for the original app.</li>
       <li><strong>Resend:</strong> sends team emails, such as invitations and announcements.</li>
       <li><strong>Google Gemini:</strong> creates the AI-generated images and stories some features offer, such as your onboarding "hero shot", birthday artwork and nickname stories. These use your profile photo and the profile details involved.</li>
