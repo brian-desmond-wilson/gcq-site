@@ -1,0 +1,48 @@
+name: Refresh Instagram posts
+
+# Once a day, copy the team's newest Instagram posts into the site (scripts/update-instagram.mjs).
+# Needs the repository secret BEHOLD_FEED_URL. Run it by hand from the Actions tab after a big post.
+on:
+  schedule:
+    - cron: "17 13 * * *" # 8:17 AM in New York (winter), 9:17 AM in summer
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+
+concurrency:
+  group: instagram
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Fetch the newest posts
+        run: node scripts/update-instagram.mjs
+        env:
+          BEHOLD_FEED_URL: ${{ secrets.BEHOLD_FEED_URL }}
+      - name: Commit when posts changed
+        id: commit
+        run: |
+          for path in data/instagram.json assets/instagram; do [ -e "$path" ] && git add -A -- "$path"; done
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Refresh Instagram posts"
+          git push
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+      # A push made by this workflow may not start a Pages build on its own, so ask for one.
+      - name: Rebuild the site
+        if: steps.commit.outputs.changed == 'true'
+        run: gh api -X POST "repos/${{ github.repository }}/pages/builds"
+        env:
+          GH_TOKEN: ${{ github.token }}
